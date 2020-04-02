@@ -1,0 +1,7 @@
+---
+# vars file for jenkins
+java:
+  VERSION: "default-jdk"
+  
+jenkins:
+  JAVA_OPTIONS: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"

@@ -1,0 +1,55 @@
+{
+    "variables": {
+        "ami-description": "Linux AMI for Jenkins Master and Slave - {{timestamp}}",
+        "ami-name": "linux-ami-for-jenkins-{{timestamp}}",
+        "aws_access_key": "",
+        "aws_secret_key": "",
+        "profile": "personal"
+    },
+    "builders": [{
+        "ami_description": "{{user `ami-description`}}",
+        "ami_name": "{{user `ami-name`}}",
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "profile": "{{user `profile`}}",
+        "region": "us-east-1",
+        "source_ami_filter": {
+            "filters": {
+            "virtualization-type": "hvm",
+            "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*", 
+            "root-device-type": "ebs"
+            },
+            "owners": ["amazon"],
+            "most_recent": true
+        },
+        "instance_type": "t2.micro",
+        "ssh_username": "ubuntu",
+        "tags": {
+            "Name": "{{user `ami-name`}}"
+          }
+    }],
+    "post-processors": [
+      {
+        "inline": [
+          "echo AMI Name {{user `ami-name`}}",
+          "date",
+          "exit 0"
+        ],
+        "type": "shell-local"
+      }
+    ],
+    "Provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo apt-get update && sudo apt-get upgrade -y",
+                "sudo apt-get install -y python"
+            ]
+        },
+        {
+            "type": "ansible",
+            "playbook_file": "./ansible/site.yml"
+        }
+    ]
+}
