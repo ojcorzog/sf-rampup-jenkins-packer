@@ -1,4 +1,6 @@
-- hosts: all
+# #for local container tests
+- hosts: all #for packer 
   roles:
     - jenkins
   tags: jenkins
+  become: true
