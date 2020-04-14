@@ -10,7 +10,7 @@ data "aws_ami" "jenkins_server" {
 
 resource "aws_instance" "jenkins" {
   ami           = data.aws_ami.jenkins_server.image_id
-  instance_type = "t2.micro"
+  instance_type = "t2.small"
 
   # the VPC subnet
   subnet_id = aws_subnet.main-public-1.id
@@ -23,5 +23,7 @@ resource "aws_instance" "jenkins" {
 
   tags = {
     Name = "Jenkins Server"
+    Environment = "Dev"
   }
 }
+

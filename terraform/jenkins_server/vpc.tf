@@ -6,7 +6,8 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = "true"
   enable_classiclink   = "false"
   tags = {
-    Name = "main"
+    Name = "main VPC for SF-Ramp-Up"
+    Environment = "Dev"
   }
 }
 

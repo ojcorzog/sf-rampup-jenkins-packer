@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment
+    {
+        VERSION = "latest"
+        PROJECT = "sf-rampup"
+        IMAGE = "sf-rampup:latest"
+        ECRURL = "http://677763992112.dkr.ecr.us-east-1.amazonaws.com/sf-rampup"
+        ECRCRED = "ecr:us-east-1:d6045e69-2f6a-4bf5-aa47-398fd452aab8"
+    }
+    stages {
+        stage('Test Application') {
+            steps {
+                sh 'mvn clean test -U'
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script
+                {
+                    // calculate GIT lastest commit short-hash
+                    gitCommitHash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+                    shortCommitHash = gitCommitHash.take(7)
+                    // calculate a sample version tag
+                    VERSION = shortCommitHash
+                    currentBuild.displayName = "#${BUILD_ID}-${VERSION}"
+                    IMAGE = "$PROJECT:$VERSION"
+                    docker.build("$IMAGE")
+                }
+            }
+        }
+
+        stage('Publish Docker Image to ECR') {
+            steps {
+                script
+                {
+                    docker.withRegistry(ECRURL, ECRCRED)
+                    {
+                        docker.image(IMAGE).push()
+                    }
+                }
+            }
+        }
+
+    }
+    tools {
+        maven 'M3'
+    }
+}
