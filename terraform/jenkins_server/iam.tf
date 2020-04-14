@@ -42,3 +42,40 @@ resource "aws_iam_role_policy" "admin-policy" {
   }
   EOF
 }
+
+# group definition
+resource "aws_iam_group" "jenkins" {
+  name = "jenkins"
+}
+
+resource "aws_iam_policy_attachment" "jenkins-attach" {
+  name       = "jenkins-attach"
+  groups     = [aws_iam_group.jenkins.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+}
+
+resource "aws_iam_policy_attachment" "ECR-attach" {
+  name       = "ECR-attach"
+  groups     = [aws_iam_group.jenkins.name]
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
+
+# user
+resource "aws_iam_user" "jenkins_user" {
+  name = "jenkins_user"
+}
+
+resource "aws_iam_access_key" "jenkins_user" {
+  user = aws_iam_user.jenkins_user.name
+}
+
+
+resource "aws_iam_group_membership" "jenkins-users" {
+  name = "jenkins-users"
+  users = [
+    aws_iam_user.jenkins_user.name
+  ]
+  group = aws_iam_group.jenkins.name
+}
+
