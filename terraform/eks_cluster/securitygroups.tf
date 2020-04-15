@@ -36,10 +36,10 @@ resource "aws_security_group_rule" "sf-rampup-cluster-ingress-workstation-https"
   # returns a single list item then leave it as-is and remove this TODO comment.
   cidr_blocks       = [local.workstation-external-cidr]
   description       = "Allow workstation to communicate with the cluster API Server"
-  from_port         = 443
+  from_port         = 0
   protocol          = "tcp"
   security_group_id = aws_security_group.sf-rampup-cluster.id
-  to_port           = 443
+  to_port           = 65535
   type              = "ingress"
 }
 
