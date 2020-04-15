@@ -22,8 +22,11 @@ spec:
     spec:
       containers:
       - name: sf-rampup-test-app
-        image: ojcorzog/sf-rampup-test-app:minikube
-        #"{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: 677763992112.dkr.ecr.us-east-1.amazonaws.com/sf-rampup:ef1a4e4
+          #"{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          #ojcorzog/sf-rampup-test-app:minikube
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+      imagePullSecrets:
+        - name: us-east-1-ecr-registry
