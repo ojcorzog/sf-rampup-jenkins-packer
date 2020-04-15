@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sf-rampup-test-app-lb
+spec:
+  selector:
+    app: sf-rampup-test-app
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+    nodePort: 30008
+  type: LoadBalancer
+    

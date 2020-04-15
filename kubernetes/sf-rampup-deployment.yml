@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sf-rampup
+  labels:
+    app: sf-rampup-test-app
+spec:
+  replicas: 2
+  minReadySeconds: 15
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: sf-rampup-test-app
+  template:
+    metadata:
+      labels:
+        app: sf-rampup-test-app
+    spec:
+      containers:
+      - name: sf-rampup-test-app
+        image: ojcorzog/sf-rampup-test-app:minikube
+        #"{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
